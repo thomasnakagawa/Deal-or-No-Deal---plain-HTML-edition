@@ -1,0 +1,147 @@
+#macro(caseName $caseObject)
+<td>
+    <center>
+    #if($caseObject.getCaseState() == "Chosen")
+        &nbsp
+    #elseif($caseObject.getCaseState() == "Closed" && $isClickable == true)
+        <a href="/game/$gameID/case/$caseObject.getNumber()">case $caseObject.getNumber()</a>
+    #else
+        case $caseObject.getNumber()
+    #end
+    </center>
+</td>
+#end
+
+#macro(caseValue $caseObject)
+<td>
+    <center>
+        #if($caseObject.getCaseState() == "Chosen")
+
+        #elseif($caseObject.getCaseState() == "Opened")
+           $caseObject.getValueFormatted()
+        #else
+           ______
+        #end
+    </center>
+</td>
+#end
+
+#macro(renderCaseTable $cases $clickable)
+#set( $isClickable = $clickable)
+<center>
+    <table>
+        <tr>
+            #caseName($cases[0])
+            #caseName($cases[1])
+            #caseName($cases[2])
+            #caseName($cases[3])
+            #caseName($cases[4])
+            #caseName($cases[5])
+            #caseName($cases[6])
+        </tr>
+        <tr>
+            #caseValue($cases[0])
+            #caseValue($cases[1])
+            #caseValue($cases[2])
+            #caseValue($cases[3])
+            #caseValue($cases[4])
+            #caseValue($cases[5])
+            #caseValue($cases[6])
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            #caseName($cases[7])
+            #caseName($cases[8])
+            #caseName($cases[9])
+            #caseName($cases[10])
+            #caseName($cases[11])
+            #caseName($cases[12])
+        </tr>
+        <tr>
+            #caseValue($cases[7])
+            #caseValue($cases[8])
+            #caseValue($cases[9])
+            #caseValue($cases[10])
+            #caseValue($cases[11])
+            #caseValue($cases[12])
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            #caseName($cases[13])
+            #caseName($cases[14])
+            #caseName($cases[15])
+            #caseName($cases[16])
+            #caseName($cases[17])
+            #caseName($cases[18])
+            #caseName($cases[19])
+        </tr>
+        <tr>
+            #caseValue($cases[13])
+            #caseValue($cases[14])
+            #caseValue($cases[15])
+            #caseValue($cases[16])
+            #caseValue($cases[17])
+            #caseValue($cases[18])
+            #caseValue($cases[19])
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            #caseName($cases[20])
+            #caseName($cases[21])
+            #caseName($cases[22])
+            #caseName($cases[23])
+            #caseName($cases[24])
+            #caseName($cases[25])
+        </tr>
+        <tr>
+            #caseValue($cases[20])
+            #caseValue($cases[21])
+            #caseValue($cases[22])
+            #caseValue($cases[23])
+            #caseValue($cases[24])
+            #caseValue($cases[25])
+        </tr>
+        <tr>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+        </tr>
+    </table>
+</center>
+#end
+
+#macro(renderIndividualCase $case)
+    Your case: case $case.getNumber()
+#end

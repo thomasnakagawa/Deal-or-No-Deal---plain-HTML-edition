@@ -1,0 +1,15 @@
+#parse("./Velocity/subComponents/caseTable.vm")
+#renderCaseTable($gameState.getCaseList(), true)
+<br/>
+<br/>
+<center>
+#if($gameState.getChosenCase())
+    #renderIndividualCase($gameState.getChosenCase())
+    #set($caseNoun = "#if($gameState.casesToOpenUntilBankerOffer() != 1)cases#{else}case#end")
+    <h2>Open $gameState.casesToOpenUntilBankerOffer() more $caseNoun</h2>
+#else
+    <h2>Choose your case</h2>
+#end
+</center>
+
+#include("./Velocity/subComponents/footer.vm")

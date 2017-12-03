@@ -1,0 +1,9 @@
+#macro(moneyTable $gameState)
+<table>
+    <tr>
+
+    </tr>
+    <tr>
+    </tr>
+</table>
+#end
