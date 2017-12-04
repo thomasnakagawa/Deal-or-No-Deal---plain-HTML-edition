@@ -1,3 +1,6 @@
+#parse("./Velocity/subComponents/moneyAmountsTable.vm")
+#renderMoneyTable($gameState.getMoneyTableState())
+
 #parse("./Velocity/subComponents/caseTable.vm")
 #renderCaseTable($gameState.getCaseList(), false)
 

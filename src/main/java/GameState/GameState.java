@@ -1,7 +1,10 @@
 package GameState;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import Util.Formatter;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class GameState {
     private List<Case> caseList;
@@ -90,15 +93,8 @@ public class GameState {
         return returnList;
     }
 
-
-
-    public Map<String, CaseState> getMoneyTableState() {
-        Map<String, CaseState> moneyTableState = new HashMap<>();
-        for (float moneyAmount : GameRules.MONEY_AMOUNTS) {
-            Case associatedCase = caseList.stream().filter(c -> c.getValue() == moneyAmount).findFirst().orElseThrow(IllegalStateException::new);
-            moneyTableState.put(associatedCase.getValueFormatted(), associatedCase.getCaseState());
-        }
-        return moneyTableState;
+    public List<Case> getMoneyTableState() {
+        return caseList.stream().sorted((case1, case2) -> Float.compare(case1.getValue(), case2.getValue())).collect(Collectors.toList());
     }
 
     private List<Case> randomizeCases() {

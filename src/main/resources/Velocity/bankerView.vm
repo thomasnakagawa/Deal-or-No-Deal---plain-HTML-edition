@@ -1,8 +1,11 @@
+#parse("./Velocity/subComponents/moneyAmountsTable.vm")
+#renderMoneyTable($gameState.getMoneyTableState())
+
 #parse("./Velocity/subComponents/caseTable.vm")
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
-<h3>The banker offers you $bankerOffer for your case</h3>
+<h3>The banker offers you <b>$bankerOffer</b> for your case</h3>
 <h1><a href="/game/$gameID/deal/yes">DEAL</a></h1>
 or
 <h1><a href="/game/$gameID/deal/no">NO DEAL</a></h1>

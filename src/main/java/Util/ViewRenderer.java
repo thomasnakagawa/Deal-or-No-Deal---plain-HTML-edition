@@ -9,16 +9,6 @@ import java.util.*;
 
 public class ViewRenderer {
 
-    // Renders a template given a model and a request
-    // The request is needed to check the user session for language settings
-    // and to see if the user is logged in
-    /*public static String render(Request request, Map<String, Object> model, String templatePath) {
-        model.put("msg", new MessageBundle(getSessionLocale(request)));
-        model.put("currentUser", getSessionCurrentUser(request));
-        model.put("WebPath", Path.Web.class); // Access application URLs from templates
-        return strictVelocityEngine().render(new ModelAndView(model, templatePath));
-    }*/
-
     public static String renderCaseView(String gameID, GameState gameState) {
         Map<String, Object> model = new HashMap<>();
         model.put("gameID", gameID);

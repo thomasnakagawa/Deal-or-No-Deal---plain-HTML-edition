@@ -1,22 +1,47 @@
+#macro(formatMoney $moneyAmount $available)
+    <h5>
+        #if($available.getCaseState() != "Opened")
+            <mark>$$moneyAmount</mark>
+        #else
+            <del>$$moneyAmount</del>
+        #end
+    </h5>
+#end
 
-
-#macro(moneyTable $gameState)
+#macro(renderMoneyTable $tableState)
 <center>
     <table>
         <tr>
-            <td>0.01</td>
-            <td>1</td>
-            <td>5</td>
-            <td>10</td>
-            <td>100</td>
+            <td>#formatMoney(0.01, $tableState.get(0))</td>
+            <td>#formatMoney(1, $tableState.get(1))</td>
+            <td>#formatMoney(5, $tableState.get(2))</td>
+            <td>#formatMoney(10, $tableState.get(3))</td>
+            <td>#formatMoney(25, $tableState.get(4))</td>
+            <td>#formatMoney(50, $tableState.get(5))</td>
+            <td>#formatMoney(75, $tableState.get(6))</td>
+            <td>#formatMoney(100, $tableState.get(7))</td>
+            <td>#formatMoney(200, $tableState.get(8))</td>
+            <td>#formatMoney(300, $tableState.get(9))</td>
+            <td>#formatMoney(400, $tableState.get(10))</td>
+            <td>#formatMoney(500, $tableState.get(11))</td>
+            <td>#formatMoney(750, $tableState.get(12))</td>
         </tr>
         <tr>
-            <td>1000</td>
-            <td>5000</td>
-            <td>10000</td>
-            <td>25000</td>
-            <td>100000</td>
+            <td>#formatMoney("1,000", $tableState.get(13))</td>
+            <td>#formatMoney("5,000", $tableState.get(14))</td>
+            <td>#formatMoney("10,000", $tableState.get(15))</td>
+            <td>#formatMoney("25,000", $tableState.get(16))</td>
+            <td>#formatMoney("50,000", $tableState.get(17))</td>
+            <td>#formatMoney("75,000", $tableState.get(18))</td>
+            <td>#formatMoney("100,000", $tableState.get(19))</td>
+            <td>#formatMoney("200,000" $tableState.get(20))</td>
+            <td>#formatMoney("300,000", $tableState.get(21))</td>
+            <td>#formatMoney("400,000", $tableState.get(22))</td>
+            <td>#formatMoney("500,000", $tableState.get(23))</td>
+            <td>#formatMoney("750,000", $tableState.get(24))</td>
+            <td>#formatMoney("1,000,000", $tableState.get(25))</td>
         </tr>
     </table>
+    <hr/>
 </center>
 #end
