@@ -1,0 +1,3 @@
+<h1>DEAL or NO DEAL</h1
+<h2>In plain HTML</h2>
+#include("./Velocity/subComponents/footer.vm")

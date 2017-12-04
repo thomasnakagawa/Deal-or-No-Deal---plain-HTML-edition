@@ -1,3 +1,7 @@
+package GameState;
+
+import Util.Formatter;
+
 public class Case {
     private int number;
     private float value;

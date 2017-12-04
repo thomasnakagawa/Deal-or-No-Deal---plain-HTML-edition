@@ -6,6 +6,14 @@
 <h1><a href="/game/$gameID/deal/yes">DEAL</a></h1>
 or
 <h1><a href="/game/$gameID/deal/no">NO DEAL</a></h1>
+#if ($gameState.getOfferHistory().size() > 0)
+    <br/>
+    <p>Previous offers</p>
+    #foreach( $offer in $gameState.getOfferHistory() )
+        $offer
+        <br/>
+    #end
+#end
 </center>
 
 #include("./Velocity/subComponents/footer.vm")

@@ -1,7 +1,6 @@
 #parse("./Velocity/subComponents/caseTable.vm")
 #renderCaseTable($gameState.getCaseList(), true)
-<br/>
-<br/>
+
 <center>
 #if($gameState.getChosenCase())
     #renderIndividualCase($gameState.getChosenCase())

@@ -18,7 +18,7 @@
         #if($caseObject.getCaseState() == "Chosen")
 
         #elseif($caseObject.getCaseState() == "Opened")
-           $caseObject.getValueFormatted()
+           <mark>$caseObject.getValueFormatted()</mark>
         #else
            ______
         #end
@@ -28,6 +28,8 @@
 
 #macro(renderCaseTable $cases $clickable)
 #set( $isClickable = $clickable)
+</br>
+</br>
 <center>
     <table>
         <tr>

@@ -1,10 +1,15 @@
+package GameState;
+
 import java.util.*;
+import Util.Formatter;
 
 public class GameState {
     private List<Case> caseList;
+    private List<Double> pastBankerOffers;
 
     public GameState() {
         caseList = randomizeCases();
+        pastBankerOffers = new ArrayList<>();
     }
 
     public void chooseCase(int caseNumber) {
@@ -33,6 +38,18 @@ public class GameState {
         return nextOfferAt - casesOpened;
     }
 
+    public boolean isTimeForSwap() {
+        int casesOpened = (int) caseList.stream().filter(c -> c.getCaseState() == CaseState.Opened).count();
+        return casesOpened == GameRules.MONEY_AMOUNTS.length - 2;
+    }
+
+    public void swapTheLastTwoCases() {
+        if (!isTimeForSwap()) {
+            throw new IllegalStateException("Cannot swap at this time");
+        }
+
+    }
+
     public List<Case> getCaseList() {
         return caseList;
     }
@@ -54,14 +71,26 @@ public class GameState {
         expectedValue /= numberUnopened;
 
 
-        return 12275.3 +
+        double offer =  12275.3 +
                 (0.748 * expectedValue) +
                 (-2714.74 * numberUnopened) +
                 (-0.04 * maxValueRemaining) +
                 (0.0000006986 * expectedValue * expectedValue) +
                 (32.623 * numberUnopened * numberUnopened);
 
+        pastBankerOffers.add(offer);
+        return offer;
     }
+
+    public List<String> getOfferHistory() {
+        List<String> returnList = new ArrayList<>();
+        for (int i = pastBankerOffers.size() - 2; i >= 0; i--) { // - 2 because skipping the most recent one
+            returnList.add(Formatter.formatMoney(pastBankerOffers.get(i)));
+        }
+        return returnList;
+    }
+
+
 
     public Map<String, CaseState> getMoneyTableState() {
         Map<String, CaseState> moneyTableState = new HashMap<>();

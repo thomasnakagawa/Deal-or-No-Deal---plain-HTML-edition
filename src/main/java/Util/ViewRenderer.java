@@ -1,9 +1,10 @@
+package Util;
+
+import GameState.GameState;
 import org.apache.velocity.app.*;
-import org.eclipse.jetty.http.*;
 import spark.*;
 import spark.template.velocity.*;
 
-import java.text.Format;
 import java.util.*;
 
 public class ViewRenderer {
@@ -31,6 +32,18 @@ public class ViewRenderer {
         model.put("gameState", gameState);
         model.put("bankerOffer", bankerOffer);
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/bankerView.vm"));
+    }
+
+    public static String renderSwapView(String gameID, GameState gameState) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("gameID", gameID);
+        model.put("gameState", gameState);
+        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/swapView.vm"));
+    }
+
+    public static String renderHomeScreen() {
+        Map<String, Object> model = new HashMap<>();
+        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/index.vm"));
     }
 
     private static VelocityTemplateEngine strictVelocityEngine() {

@@ -1,9 +1,22 @@
-#macro(moneyTable $gameState)
-<table>
-    <tr>
 
-    </tr>
-    <tr>
-    </tr>
-</table>
+
+#macro(moneyTable $gameState)
+<center>
+    <table>
+        <tr>
+            <td>0.01</td>
+            <td>1</td>
+            <td>5</td>
+            <td>10</td>
+            <td>100</td>
+        </tr>
+        <tr>
+            <td>1000</td>
+            <td>5000</td>
+            <td>10000</td>
+            <td>25000</td>
+            <td>100000</td>
+        </tr>
+    </table>
+</center>
 #end
