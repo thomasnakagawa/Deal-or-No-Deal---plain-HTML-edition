@@ -4,15 +4,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import Util.Formatter;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class GameState {
     private List<Case> caseList;
     private List<Double> pastBankerOffers;
+    private boolean hasSwapped;
+    private int finalWinnings = -1;
 
     public GameState() {
         caseList = randomizeCases();
         pastBankerOffers = new ArrayList<>();
+        hasSwapped = false;
     }
 
     public void chooseCase(int caseNumber) {
@@ -51,6 +53,26 @@ public class GameState {
             throw new IllegalStateException("Cannot swap at this time");
         }
 
+        Case finalCase = getTheFinalCase();
+        finalCase.setCaseState(CaseState.Chosen);
+
+        Case chosenCase = getChosenCase();
+        chosenCase.setCaseState(CaseState.Closed);
+
+        hasSwapped = true;
+    }
+
+    public Case getTheFinalCase() {
+        if (!isTimeForSwap()) {
+            throw new IllegalStateException("Cannot get final case at this time");
+        }
+        return caseList.stream()
+                .filter(c -> c.getCaseState() == CaseState.Closed)
+                .findFirst().orElseThrow(IllegalStateException::new);
+    }
+
+    public boolean hasSwappedCases() {
+        return hasSwapped;
     }
 
     public List<Case> getCaseList() {
@@ -73,7 +95,6 @@ public class GameState {
         }
         expectedValue /= numberUnopened;
 
-
         double offer =  12275.3 +
                 (0.748 * expectedValue) +
                 (-2714.74 * numberUnopened) +
@@ -85,9 +106,21 @@ public class GameState {
         return offer;
     }
 
+    public String getLatestOffer() {
+        return Formatter.formatMoney(pastBankerOffers.get(pastBankerOffers.size() - 1));
+    }
+
     public List<String> getOfferHistory() {
         List<String> returnList = new ArrayList<>();
         for (int i = pastBankerOffers.size() - 2; i >= 0; i--) { // - 2 because skipping the most recent one
+            returnList.add(Formatter.formatMoney(pastBankerOffers.get(i)));
+        }
+        return returnList;
+    }
+
+    public List<String> getCompleteOfferHistory() {
+        List<String> returnList = new ArrayList<>();
+        for (int i = pastBankerOffers.size() - 1; i >= 0; i--) { // - 1 because including the most recent one
             returnList.add(Formatter.formatMoney(pastBankerOffers.get(i)));
         }
         return returnList;
@@ -116,6 +149,17 @@ public class GameState {
 
     private boolean hasChosenOwnCase() {
         return caseList.stream().anyMatch(c -> c.getCaseState() == CaseState.Chosen);
+    }
+
+    private void setFinalWinnings(int moneyAmount) {
+        if (finalWinnings != -1) {
+            throw new IllegalStateException("Cannot set winnings after it's been set");
+        }
+        finalWinnings = moneyAmount;
+    }
+
+    public int getFinalWinnings() {
+        return finalWinnings;
     }
 
 }

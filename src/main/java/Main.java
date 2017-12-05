@@ -1,4 +1,5 @@
 import GameState.GameState;
+import GameState.Case;
 import GameState.GameStateCache;
 import Util.Formatter;
 import Util.ViewRenderer;
@@ -56,7 +57,7 @@ public class Main {
                 // delete the game state, ensure no backsies
                 gameStateCache.removeGameState(gameID);
 
-                return "Congrats bruh";
+                return ViewRenderer.renderEnding(gameID, gameState, false, true);
             } else {
                 // serve the next case view
                 // if time for swap view, show that
@@ -76,12 +77,23 @@ public class Main {
             // get associate GameState.GameState
             GameState gameState = gameStateCache.getGameState(gameID);
 
+            // apply swap if chose to
             if (swap) {
                 gameState.swapTheLastTwoCases();
             }
 
             // render next view
-            return "";
+            return ViewRenderer.renderEnding(gameID, gameState, swap, false);
+        });
+
+        post("/game/*/leaderboard", (req, res) -> {
+            // post to leaderboard
+            
+            return ViewRenderer.renderLeaderboard();
+        });
+
+        get("/game/leaderboard", (req, res) -> {
+            return ViewRenderer.renderLeaderboard();
         });
     }
 }

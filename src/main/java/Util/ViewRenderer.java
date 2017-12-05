@@ -31,6 +31,15 @@ public class ViewRenderer {
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/swapView.vm"));
     }
 
+    public static String renderEnding(String gameID, GameState gameState, boolean swapped, boolean deal) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("gameID", gameID);
+        model.put("gameState", gameState);
+        model.put("swapped", swapped);
+        model.put("deal", deal);
+        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/ending.vm"));
+    }
+
     public static String renderHomeScreen() {
         Map<String, Object> model = new HashMap<>();
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/index.vm"));
