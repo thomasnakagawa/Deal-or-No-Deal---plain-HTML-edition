@@ -5,46 +5,47 @@
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
-<h3>
-    #if($deal == true)
-        #set($offers = $gameState.getOfferHistory())
-        <br/>
-        You sold your case to the banker for $gameState.getLatestOffer(), it contained $gameState.getChosenCase().getValueFormatted().
-        <br/>
-        <br/>
-        You won $gameState.getLatestOffer(), congratulations!
-    #elseif($swapped == true)
-        #set($offers = $gameState.getCompleteOfferHistory())
-        <br/>
-        You swapped with case $gameState.getChosenCase().getNumber(). Your new case contains $gameState.getChosenCase().getValueFormatted(). You original case contained $gameState.getTheFinalCase().getValueFormatted().
-        <br/>
-        <br/>
-        You won $gameState.getChosenCase().getValueFormatted(), congratulations!
-    #else
-        #set($offers = $gameState.getCompleteOfferHistory())
-        <br/>
-        You kept your case and it contained $gameState.getChosenCase().getValueFormatted(). The other case contained $gameState.getTheFinalCase().getValueFormatted().
-        <br/>
-        <br/>
-        You won $gameState.getChosenCase().getValueFormatted(), congratulations!
-    #end
-</h3>
+    #renderIndividualCase($gameState.getChosenCase())
+    <h3>
+        #if($deal == true)
+            #set($offers = $gameState.getOfferHistory())
+            <br/>
+            You sold your case to the banker for $gameState.getLatestOffer(), it contained $gameState.getChosenCase().getValueFormatted().
+            <br/>
+            <br/>
+            You won $gameState.getLatestOffer(), congratulations!
+        #elseif($swapped == true)
+            #set($offers = $gameState.getCompleteOfferHistory())
+            <br/>
+            You swapped with case $gameState.getChosenCase().getNumber(). Your new case contains $gameState.getChosenCase().getValueFormatted(). You original case contained $gameState.getTheFinalCase().getValueFormatted().
+            <br/>
+            <br/>
+            You won $gameState.getChosenCase().getValueFormatted(), congratulations!
+        #else
+            #set($offers = $gameState.getCompleteOfferHistory())
+            <br/>
+            You kept your case and it contained $gameState.getChosenCase().getValueFormatted(). The other case contained $gameState.getTheFinalCase().getValueFormatted().
+            <br/>
+            <br/>
+            You won $gameState.getChosenCase().getValueFormatted(), congratulations!
+        #end
+    </h3>
 
-#if ($offers.size() > 0)
-    <br/>
-    <p>You turned down offers for</p>
-    #foreach( $offer in $offers )
-        $offer
+    #if ($offers.size() > 0)
         <br/>
+        <p>You turned down offers for</p>
+        #foreach( $offer in $offers )
+            $offer
+            <br/>
+        #end
     #end
-#end
-<br/>
-<br/>
-<form action="/game/$gameID/leaderboard" method="post">
-    Enter your name into the leaderboards:
-    <input type="text" name="name">
-    <input type="submit" value="Submit">
-</form>
+    <br/>
+    <br/>
+    <form action="/game/$gameID/leaderboard" method="post">
+        Enter your name into the leaderboards:
+        <input type="text" name="name">
+        <input type="submit" value="Submit">
+    </form>
 </center>
 
 #include("subComponents/footer.vm")

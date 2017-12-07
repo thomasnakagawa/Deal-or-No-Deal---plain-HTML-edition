@@ -5,18 +5,19 @@
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
-<h3>The banker offers you <b>$bankerOffer</b> for your case</h3>
-<h1><a href="/game/$gameID/deal/yes">DEAL</a></h1>
-or
-<h1><a href="/game/$gameID/deal/no">NO DEAL</a></h1>
-#if ($gameState.getOfferHistory().size() > 0)
-    <br/>
-    <p>Previous offers</p>
-    #foreach( $offer in $gameState.getOfferHistory() )
-        $offer
+    #renderIndividualCase($gameState.getChosenCase())
+    <h3>The banker offers you <b>$bankerOffer</b> for your case</h3>
+    <h1><a href="/game/$gameID/deal/yes">DEAL</a></h1>
+    or
+    <h1><a href="/game/$gameID/deal/no">NO DEAL</a></h1>
+    #if ($gameState.getOfferHistory().size() > 0)
         <br/>
+        <p>Previous offers</p>
+        #foreach( $offer in $gameState.getOfferHistory() )
+            $offer
+            <br/>
+        #end
     #end
-#end
 </center>
 
 #include("subComponents/footer.vm")

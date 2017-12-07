@@ -5,10 +5,11 @@
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
-<h3>There is only one case left. Do you want to swap?</h3>
-<h4><a href="/game/$gameID/swap/yes">Swap cases</a></h4>
-or
-<h4><a href="/game/$gameID/swap/no">Keep my case</a></h4>
+    #renderIndividualCase($gameState.getChosenCase())
+    <h3>There is only one case left. Do you want to swap?</h3>
+    <h4><a href="/game/$gameID/swap/yes">Swap cases</a></h4>
+    or
+    <h4><a href="/game/$gameID/swap/no">Keep my case</a></h4>
 </center>
 
 #include("subComponents/footer.vm")

@@ -57,7 +57,7 @@ public class GameState {
         finalCase.setCaseState(CaseState.Chosen);
 
         Case chosenCase = getChosenCase();
-        chosenCase.setCaseState(CaseState.Closed);
+        chosenCase.setCaseState(CaseState.Opened);
 
         hasSwapped = true;
     }
@@ -110,6 +110,10 @@ public class GameState {
         return Formatter.formatMoney(pastBankerOffers.get(pastBankerOffers.size() - 1));
     }
 
+    public double getLatestOfferValue() {
+        return pastBankerOffers.get(pastBankerOffers.size() - 1);
+    }
+
     public List<String> getOfferHistory() {
         List<String> returnList = new ArrayList<>();
         for (int i = pastBankerOffers.size() - 2; i >= 0; i--) { // - 2 because skipping the most recent one
@@ -151,7 +155,7 @@ public class GameState {
         return caseList.stream().anyMatch(c -> c.getCaseState() == CaseState.Chosen);
     }
 
-    private void setFinalWinnings(int moneyAmount) {
+    public void setFinalWinnings(int moneyAmount) {
         if (finalWinnings != -1) {
             throw new IllegalStateException("Cannot set winnings after it's been set");
         }
@@ -159,6 +163,9 @@ public class GameState {
     }
 
     public int getFinalWinnings() {
+        if (finalWinnings == -1) {
+            throw new IllegalStateException("Cannot get winnings before it's been set");
+        }
         return finalWinnings;
     }
 

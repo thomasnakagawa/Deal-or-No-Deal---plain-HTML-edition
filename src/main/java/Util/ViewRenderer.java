@@ -54,6 +54,11 @@ public class ViewRenderer {
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/index.vm"));
     }
 
+    public static String renderAboutPage() {
+        Map<String, Object> model = new HashMap<>();
+        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/about.vm"));
+    }
+
     private static VelocityTemplateEngine strictVelocityEngine() {
         VelocityEngine configuredEngine = new VelocityEngine();
         configuredEngine.setProperty("runtime.references.strict", true);

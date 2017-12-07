@@ -1,18 +1,23 @@
 import GameState.GameState;
-import GameState.Case;
 import GameState.GameStateCache;
 import Util.Formatter;
+import Util.LeaderboardAccessor;
 import Util.ViewRenderer;
+
+import java.io.IOException;
 
 import static spark.Spark.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        port(80);
+        System.out.println("Running");
+
         GameStateCache gameStateCache = new GameStateCache();
 
-        get("/", (req, res) -> {
-            return ViewRenderer.renderHomeScreen();
-        });
+        get("/", (req, res) -> ViewRenderer.renderHomeScreen());
+        get("/about", (req, res) -> ViewRenderer.renderAboutPage());
+        get("/leaderboard", (req, res) -> ViewRenderer.renderLeaderboard(LeaderboardAccessor.getLeaderboardScores(), null));
 
         get("/start", (req, res) -> {
             String id = gameStateCache.createNewGame();
@@ -54,8 +59,8 @@ public class Main {
 
             // process the deal and render the next view
             if (deal) {
-                // delete the game state, ensure no backsies
-                gameStateCache.removeGameState(gameID);
+                int finalScore = (int) Math.floor(gameState.getLatestOfferValue());
+                gameState.setFinalWinnings(finalScore);
 
                 return ViewRenderer.renderEnding(gameID, gameState, false, true);
             } else {
@@ -82,18 +87,27 @@ public class Main {
                 gameState.swapTheLastTwoCases();
             }
 
+            // set the final score
+            int finalScore = (int) Math.floor(gameState.getChosenCase().getValue());
+            gameState.setFinalWinnings(finalScore);
+
             // render next view
             return ViewRenderer.renderEnding(gameID, gameState, swap, false);
         });
 
         post("/game/*/leaderboard", (req, res) -> {
-            // post to leaderboard
-            
-            return ViewRenderer.renderLeaderboard();
-        });
+            System.out.println("here");
+            // get values from request
+            String gameID = req.splat()[0];
+            String name = req.queryParams("name");
 
-        get("/game/leaderboard", (req, res) -> {
-            return ViewRenderer.renderLeaderboard();
+            // get associate GameState.GameState
+            GameState gameState = gameStateCache.getGameState(gameID);
+            int score = gameState.getFinalWinnings();
+            gameStateCache.removeGameState(gameID);
+
+            // post to leaderboard
+            return ViewRenderer.renderLeaderboard(LeaderboardAccessor.postScoreAndGetLeaderboardScores(name, score), name);
         });
     }
 }
