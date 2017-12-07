@@ -1,7 +1,7 @@
-#parse("./Velocity/subComponents/moneyAmountsTable.vm")
+#parse("subComponents/moneyAmountsTable.vm")
 #renderMoneyTable($gameState.getMoneyTableState())
 
-#parse("./Velocity/subComponents/caseTable.vm")
+#parse("subComponents/caseTable.vm")
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
@@ -38,6 +38,13 @@
         <br/>
     #end
 #end
+<br/>
+<br/>
+<form action="/game/$gameID/leaderboard" method="post">
+    Enter your name into the leaderboards:
+    <input type="text" name="name">
+    <input type="submit" value="Submit">
+</form>
 </center>
 
-#include("./Velocity/subComponents/footer.vm")
+#include("subComponents/footer.vm")

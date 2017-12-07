@@ -1,0 +1,7 @@
+<h1>Leaderboards</h1>
+#foreach( $score in $scores )
+    $score
+    <br/>
+#end
+<br/>
+#include("subComponents/footer.vm")

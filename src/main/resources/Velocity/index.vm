@@ -1,5 +1,10 @@
 <center>
+<br/>
 <h1>DEAL or NO DEAL</h1
 <h2>In plain HTML</h2>
-#include("./Velocity/subComponents/footer.vm")
+<br/>
+<br/>
+<a href="/start">Start</a>
+<br/>
+<a href="/about">About</a>
 </center>
