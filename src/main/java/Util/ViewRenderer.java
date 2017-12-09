@@ -18,11 +18,10 @@ public class ViewRenderer {
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/caseView.vm"));
     }
 
-    public static String renderBankerView(String gameID, GameState gameState, String bankerOffer) {
+    public static String renderBankerView(String gameID, GameState gameState) {
         Map<String, Object> model = new HashMap<>();
         model.put("gameID", gameID);
         model.put("gameState", gameState);
-        model.put("bankerOffer", bankerOffer);
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/bankerView.vm"));
     }
 
@@ -33,19 +32,16 @@ public class ViewRenderer {
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/swapView.vm"));
     }
 
-    public static String renderEnding(String gameID, GameState gameState, boolean swapped, boolean deal) {
+    public static String renderEnding(String gameID, GameState gameState) {
         Map<String, Object> model = new HashMap<>();
         model.put("gameID", gameID);
         model.put("gameState", gameState);
-        model.put("swapped", swapped);
-        model.put("deal", deal);
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/ending.vm"));
     }
 
-    public static String renderLeaderboard(List<String> scores, String ownName) {
+    public static String renderLeaderboard(List<String> scores) {
         Map<String, Object> model = new HashMap<>();
         model.put("scores", scores);
-        model.put("ownName", ownName);
         return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/leaderboard.vm"));
     }
 

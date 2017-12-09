@@ -3,170 +3,134 @@ package GameState;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import Util.Formatter;
-
 public class GameState {
-    private List<Case> caseList;
-    private List<Double> pastBankerOffers;
-    private boolean hasSwapped;
-    private int finalWinnings = -1;
+    private CaseCollection caseCollection;
+    private Banker banker;
+    private EndingState endingState;
+    private boolean latestOfferNeedsDecision;
 
     public GameState() {
-        caseList = randomizeCases();
-        pastBankerOffers = new ArrayList<>();
-        hasSwapped = false;
-    }
-
-    public void chooseCase(int caseNumber) {
-        if (caseNumber < 1 || caseNumber > GameRules.MONEY_AMOUNTS.length) {
-            throw new IllegalArgumentException("There is no case with that number");
-        }
-        Case chosenCase = getCaseByNumber(caseNumber);
-        if (hasChosenOwnCase()) {
-            // the initial case has been chosen, open the given case
-            chosenCase.setCaseState(CaseState.Opened);
-        }else {
-            // no initial case had been chosen, so choose this one
-            chosenCase.setCaseState(CaseState.Chosen);
-        }
-    }
-
-    public Case getChosenCase() {
-        return caseList.stream()
-                .filter(c -> c.getCaseState() == CaseState.Chosen) // not inefficient because lazy evaluation
-                .findFirst().orElse(null);
-    }
-
-    public int casesToOpenUntilBankerOffer() {
-        int casesOpened = (int) caseList.stream().filter(c -> c.getCaseState() == CaseState.Opened).count();
-        int nextOfferAt = Arrays.asList(GameRules.BANKER_OFFERS_AT).stream().filter(offer -> offer > casesOpened).min(Integer::compare).get();
-        return nextOfferAt - casesOpened;
+        caseCollection = new CaseCollection(GameRules.MONEY_AMOUNTS);
+        banker = new Banker();
+        latestOfferNeedsDecision = false;
     }
 
     public boolean isTimeForSwap() {
-        int casesOpened = (int) caseList.stream().filter(c -> c.getCaseState() == CaseState.Opened).count();
-        return casesOpened == GameRules.MONEY_AMOUNTS.length - 2;
+        // it's time to give the option to swap when there is only one closed case left
+        int closedCases = caseCollection.getClosedCases().size();
+        return closedCases == 1;
     }
 
-    public void swapTheLastTwoCases() {
-        if (!isTimeForSwap()) {
-            throw new IllegalStateException("Cannot swap at this time");
+    public void chooseCase(int caseNumber) {
+        if (caseCollection.hasChosenOwnCase()) {
+            caseCollection.openCase(caseNumber);
+            // if its time, have banker make an offer
+            if (casesToOpenUntilBankerOffer() == 0) {
+                 makeBankerOffer();
+            }
+        }else {
+            caseCollection.ownCase(caseNumber);
         }
+    }
 
-        Case finalCase = getTheFinalCase();
-        finalCase.setCaseState(CaseState.Chosen);
+    private void makeBankerOffer() {
+        List<Float> moneyValues = caseCollection
+                .getClosedCases().stream()
+                .map(c -> c.getValue())
+                .collect(Collectors.toList());
+        banker.generateOffer(moneyValues);
+        latestOfferNeedsDecision = true;
+    }
 
-        Case chosenCase = getChosenCase();
-        chosenCase.setCaseState(CaseState.Opened);
+    public boolean needDecisionOnOffer() {
+        return latestOfferNeedsDecision;
+    }
 
-        hasSwapped = true;
+    public double getLatestOffer() {
+        return banker.getOfferHistory().get(0);
+    }
+    public void declineOffer() {
+        if (needDecisionOnOffer() == false) {
+            throw new IllegalStateException("Cannot decline offer because there isn't one");
+        }
+        latestOfferNeedsDecision = false;
+    }
+
+    public List<Double> getFullOfferHistory() {
+        return banker.getOfferHistory();
+    }
+
+    public List<Double> getOfferHistoryMinusMostRecent() {
+        List<Double> history = getFullOfferHistory();
+        return history.subList(1, history.size());
+    }
+
+    public int casesToOpenUntilBankerOffer() {
+        int casesOpened = caseCollection.getOpenedCases().size();
+        int nextOfferAt = Arrays.asList(GameRules.BANKER_OFFERS_AT).stream()
+                .filter(offer -> offer > casesOpened)
+                .min(Integer::compare).get();
+        return nextOfferAt - casesOpened;
     }
 
     public Case getTheFinalCase() {
         if (!isTimeForSwap()) {
-            throw new IllegalStateException("Cannot get final case at this time");
+            throw new IllegalStateException("Cannot get final case because its not time for the swap");
         }
-        return caseList.stream()
-                .filter(c -> c.getCaseState() == CaseState.Closed)
-                .findFirst().orElseThrow(IllegalStateException::new);
-    }
 
-    public boolean hasSwappedCases() {
-        return hasSwapped;
+        List<Case> closedCases = caseCollection.getClosedCases();
+        if (closedCases.size() != 1) {
+            throw new IllegalStateException("Cannot get final case, there is more than one");
+        }
+        return closedCases.get(0);
     }
 
     public List<Case> getCaseList() {
-        return caseList;
-    }
-
-    public double generateBankerOffer() {
-        // http://commcognition.blogspot.ca/2007/06/deal-or-no-deal-bankers-formula.html
-        double expectedValue = 0f;
-        int numberUnopened = 0;
-        float maxValueRemaining = -1f;
-        float minValueRemaining = 9999999999f;
-        for (Case c : caseList) {
-            if (c.getCaseState() != CaseState.Opened) {
-                numberUnopened += 1;
-                expectedValue += c.getValue();
-                maxValueRemaining = Math.max(c.getValue(), maxValueRemaining);
-                minValueRemaining = Math.min(c.getValue(), minValueRemaining);
-            }
-        }
-        expectedValue /= numberUnopened;
-
-        double offer =  12275.3 +
-                (0.748 * expectedValue) +
-                (-2714.74 * numberUnopened) +
-                (-0.04 * maxValueRemaining) +
-                (0.0000006986 * expectedValue * expectedValue) +
-                (32.623 * numberUnopened * numberUnopened);
-
-        pastBankerOffers.add(offer);
-        return offer;
-    }
-
-    public String getLatestOffer() {
-        return Formatter.formatMoney(pastBankerOffers.get(pastBankerOffers.size() - 1));
-    }
-
-    public double getLatestOfferValue() {
-        return pastBankerOffers.get(pastBankerOffers.size() - 1);
-    }
-
-    public List<String> getOfferHistory() {
-        List<String> returnList = new ArrayList<>();
-        for (int i = pastBankerOffers.size() - 2; i >= 0; i--) { // - 2 because skipping the most recent one
-            returnList.add(Formatter.formatMoney(pastBankerOffers.get(i)));
-        }
-        return returnList;
-    }
-
-    public List<String> getCompleteOfferHistory() {
-        List<String> returnList = new ArrayList<>();
-        for (int i = pastBankerOffers.size() - 1; i >= 0; i--) { // - 1 because including the most recent one
-            returnList.add(Formatter.formatMoney(pastBankerOffers.get(i)));
-        }
-        return returnList;
+        return caseCollection.getAllCases();
     }
 
     public List<Case> getMoneyTableState() {
-        return caseList.stream().sorted((case1, case2) -> Float.compare(case1.getValue(), case2.getValue())).collect(Collectors.toList());
-    }
-
-    private List<Case> randomizeCases() {
-        List<Float> randomMoneyAmounts = Arrays.asList(GameRules.MONEY_AMOUNTS);
-        Collections.shuffle(randomMoneyAmounts);
-
-        List<Case> cases = new ArrayList<>();
-        for (int i = 0; i < randomMoneyAmounts.size(); i++) {
-            cases.add(new Case(i + 1, randomMoneyAmounts.get(i)));
-        }
-        return cases;
-    }
-
-    private Case getCaseByNumber(int caseNumber) {
-        return caseList.stream()
-                .filter(c -> c.getNumber() == caseNumber) // not inefficient because lazy evaluation
-                .findFirst().orElse(null);
+        return getCaseList().stream().sorted((case1, case2) -> Float.compare(case1.getValue(), case2.getValue())).collect(Collectors.toList());
     }
 
     private boolean hasChosenOwnCase() {
-        return caseList.stream().anyMatch(c -> c.getCaseState() == CaseState.Chosen);
+        return caseCollection.hasChosenOwnCase();
     }
 
-    public void setFinalWinnings(int moneyAmount) {
-        if (finalWinnings != -1) {
-            throw new IllegalStateException("Cannot set winnings after it's been set");
+    public void finalizeGame(EndingType endingType) {
+        if (endingState != null) {
+            throw new IllegalStateException("Cannot finalize the game after it has already been finalized");
         }
-        finalWinnings = moneyAmount;
+        if (endingType == null) {
+            throw new IllegalArgumentException("Ending type cannot be null");
+        }
+        int finalWinnings = -1;
+        switch(endingType) {
+            case Deal:
+                // TODO: ensure this is ok time to take deal.
+                finalWinnings = (int) Math.floor(banker.getOfferHistory().get(0));
+                break;
+            case Swap:
+                // TODO: ensure this is ok time to swap. Closed cases = 1 or something
+                caseCollection.swapChosenCaseWithLastClosedCase();
+                finalWinnings = (int) Math.floor(caseCollection.getOwnedCase().getValue());
+                break;
+            case NoSwap:
+                // TODO: ensure this is ok time to not swap. Closed cases = 1 or something
+                finalWinnings = (int) Math.floor(caseCollection.getOwnedCase().getValue());
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot finalize the game with this ending type");
+        }
+
+        endingState = new EndingState(endingType, finalWinnings);
     }
 
     public int getFinalWinnings() {
-        if (finalWinnings == -1) {
-            throw new IllegalStateException("Cannot get winnings before it's been set");
+        if (endingState == null) {
+            throw new IllegalStateException("Cannot get winnings before finalizing the game");
         }
-        return finalWinnings;
+        return endingState.getPrizeMoney();
     }
 
 }

@@ -1,5 +1,6 @@
 import GameState.GameState;
 import GameState.GameStateCache;
+import GameState.EndingType;
 import Util.Formatter;
 import Util.LeaderboardAccessor;
 import Util.ViewRenderer;
@@ -17,7 +18,7 @@ public class Main {
 
         get("/", (req, res) -> ViewRenderer.renderHomeScreen());
         get("/about", (req, res) -> ViewRenderer.renderAboutPage());
-        get("/leaderboard", (req, res) -> ViewRenderer.renderLeaderboard(LeaderboardAccessor.getLeaderboardScores(), null));
+        get("/leaderboard", (req, res) -> ViewRenderer.renderLeaderboard(LeaderboardAccessor.getLeaderboardScores()));
 
         get("/start", (req, res) -> {
             String id = gameStateCache.createNewGame();
@@ -34,13 +35,11 @@ public class Main {
             GameState gameState = gameStateCache.getGameState(gameID);
 
             // open the case
-            boolean isTimeForBankerOffer = gameState.casesToOpenUntilBankerOffer() == 1;
             gameState.chooseCase(caseNumber);
 
             // render the next view
-            if (isTimeForBankerOffer) {
-                String offer = Formatter.formatMoney(gameState.generateBankerOffer());
-                return ViewRenderer.renderBankerView(gameID, gameState, offer);
+            if (gameState.needDecisionOnOffer()) {
+                return ViewRenderer.renderBankerView(gameID, gameState);
             } else {
                 return ViewRenderer.renderCaseView(gameID, gameState);
             }
@@ -54,19 +53,16 @@ public class Main {
             // get associate GameState.GameState
             GameState gameState = gameStateCache.getGameState(gameID);
 
-            // validate that this is a correct time for a deal/no deal
-            // TODO
-
             // process the deal and render the next view
             if (deal) {
-                int finalScore = (int) Math.floor(gameState.getLatestOfferValue());
-                gameState.setFinalWinnings(finalScore);
-
-                return ViewRenderer.renderEnding(gameID, gameState, false, true);
+                gameState.finalizeGame(EndingType.Deal);
+                return ViewRenderer.renderEnding(gameID, gameState);
             } else {
                 // serve the next case view
                 // if time for swap view, show that
+                gameState.declineOffer();
                 if (gameState.isTimeForSwap()) {
+                    // TODO: this only works because the swap option always happens after a deal decision. If the rules change and that isnt the case, this check will have to happen somewhere else
                     return ViewRenderer.renderSwapView(gameID, gameState);
                 } else {
                     return ViewRenderer.renderCaseView(gameID, gameState);
@@ -84,30 +80,27 @@ public class Main {
 
             // apply swap if chose to
             if (swap) {
-                gameState.swapTheLastTwoCases();
+                gameState.finalizeGame(EndingType.Swap);
+            }else {
+                gameState.finalizeGame(EndingType.NoSwap);
             }
 
-            // set the final score
-            int finalScore = (int) Math.floor(gameState.getChosenCase().getValue());
-            gameState.setFinalWinnings(finalScore);
-
             // render next view
-            return ViewRenderer.renderEnding(gameID, gameState, swap, false);
+            return ViewRenderer.renderEnding(gameID, gameState);
         });
 
         post("/game/*/leaderboard", (req, res) -> {
-            System.out.println("here");
             // get values from request
             String gameID = req.splat()[0];
             String name = req.queryParams("name");
 
-            // get associate GameState.GameState
+            // get associate GameState
             GameState gameState = gameStateCache.getGameState(gameID);
             int score = gameState.getFinalWinnings();
             gameStateCache.removeGameState(gameID);
 
             // post to leaderboard
-            return ViewRenderer.renderLeaderboard(LeaderboardAccessor.postScoreAndGetLeaderboardScores(name, score), name);
+            return ViewRenderer.renderLeaderboard(LeaderboardAccessor.postScoreAndGetLeaderboardScores(name, score));
         });
     }
 }
