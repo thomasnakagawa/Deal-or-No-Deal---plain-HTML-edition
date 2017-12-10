@@ -1,10 +1,10 @@
-package GameState;
+package GameState.Ending;
 
-public class EndingState {
+public class EndingData {
     private EndingType endingType;
     private int prizeMoney;
 
-    public EndingState(EndingType endingType, int prizeMoney) {
+    public EndingData(EndingType endingType, int prizeMoney) {
         this.endingType = endingType;
         this.prizeMoney = prizeMoney;
     }

@@ -1,4 +1,4 @@
-package GameState;
+package GameState.Ending;
 
 public enum EndingType {
     Deal,

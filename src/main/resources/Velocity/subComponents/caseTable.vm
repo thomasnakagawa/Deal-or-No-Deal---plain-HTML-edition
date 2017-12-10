@@ -1,7 +1,7 @@
 #macro(caseName $caseObject)
 <td>
     <center>
-    #if($caseObject.getCaseState() == "Chosen")
+    #if($caseObject.getCaseState() == "Owned")
         &nbsp
     #elseif($caseObject.getCaseState() == "Closed" && $isClickable == true)
         <a href="/game/$gameID/case/$caseObject.getNumber()">case $caseObject.getNumber()</a>
@@ -15,12 +15,12 @@
 #macro(caseValue $caseObject)
 <td>
     <center>
-        #if($caseObject.getCaseState() == "Chosen")
+        #if($caseObject.getCaseState() == "Owned")
 
         #elseif($caseObject.getCaseState() == "Opened")
-           <mark>$caseObject.getValueFormatted()</mark>
+           <mark>$Formatter.formatMoney($caseObject.getValue())</mark>
         #else
-           ______
+           $Render.constant("BLANK_CASE_COST")
         #end
     </center>
 </td>
@@ -51,13 +51,13 @@
             #caseValue($cases[6])
         </tr>
         <tr>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
         </tr>
     </table>
     <table>
@@ -78,12 +78,12 @@
             #caseValue($cases[12])
         </tr>
         <tr>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
         </tr>
     </table>
     <table>
@@ -106,13 +106,13 @@
             #caseValue($cases[19])
         </tr>
         <tr>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
         </tr>
     </table>
     <table>
@@ -133,12 +133,12 @@
             #caseValue($cases[25])
         </tr>
         <tr>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
-            <td>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
+            <td>$Render.constant("CASE_SPACER")</td>
         </tr>
     </table>
 </center>

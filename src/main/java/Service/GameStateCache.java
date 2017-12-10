@@ -1,10 +1,12 @@
-package GameState;
+package Service;
+
+import GameState.GameState;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class GameStateCache {
+class GameStateCache {
     private Map<String, GameState> gameStateMap;
 
     public GameStateCache() {

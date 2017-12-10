@@ -1,18 +1,16 @@
-package Util;
+package Service;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardAccessor {
+class LeaderboardAccessor {
     private static String dreamloKey;
 
     public static List<String> getLeaderboardScores() throws IOException {

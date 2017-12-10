@@ -1,18 +1,26 @@
 package GameState;
 
+import GameState.Case.Case;
+import GameState.Ending.EndingData;
+import GameState.Ending.EndingType;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameState {
     private CaseCollection caseCollection;
     private Banker banker;
-    private EndingState endingState;
-    private boolean latestOfferNeedsDecision;
+    private EndingData endingData;
+    private GamePhase gamePhase;
 
     public GameState() {
         caseCollection = new CaseCollection(GameRules.MONEY_AMOUNTS);
         banker = new Banker();
-        latestOfferNeedsDecision = false;
+        gamePhase = GamePhase.choosingInitialCase;
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
     }
 
     public boolean isTimeForSwap() {
@@ -22,38 +30,52 @@ public class GameState {
     }
 
     public void chooseCase(int caseNumber) {
-        if (caseCollection.hasChosenOwnCase()) {
+        if (gamePhase == GamePhase.choosingInitialCase) {
+            caseCollection.ownCase(caseNumber);
+            gamePhase = GamePhase.openingCases;
+        }else if (gamePhase == GamePhase.openingCases) {
+            boolean timeForOffer = casesToOpenUntilBankerOffer() == 1;
             caseCollection.openCase(caseNumber);
             // if its time, have banker make an offer
-            if (casesToOpenUntilBankerOffer() == 0) {
-                 makeBankerOffer();
+            if (timeForOffer) {
+                makeBankerOffer();
+                gamePhase = GamePhase.pendingDeal;
             }
         }else {
-            caseCollection.ownCase(caseNumber);
+            throw new IllegalStateException("Cannot choose case at this time");
         }
+    }
+
+    public int casesToOpenUntilBankerOffer() {
+        int casesOpened = caseCollection.getOpenedCases().size();
+        int nextOfferAt = Arrays.asList(GameRules.BANKER_OFFERS_AT).stream()
+                .filter(offer -> offer > casesOpened)
+                .min(Integer::compare).get();
+        return nextOfferAt - casesOpened;
     }
 
     private void makeBankerOffer() {
         List<Float> moneyValues = caseCollection
-                .getClosedCases().stream()
+                .getClosedCases()
+                .stream()
                 .map(c -> c.getValue())
                 .collect(Collectors.toList());
-        banker.generateOffer(moneyValues);
-        latestOfferNeedsDecision = true;
-    }
 
-    public boolean needDecisionOnOffer() {
-        return latestOfferNeedsDecision;
+        banker.generateOffer(moneyValues);
     }
 
     public double getLatestOffer() {
         return banker.getOfferHistory().get(0);
     }
     public void declineOffer() {
-        if (needDecisionOnOffer() == false) {
+        if (gamePhase != GamePhase.pendingDeal) {
             throw new IllegalStateException("Cannot decline offer because there isn't one");
         }
-        latestOfferNeedsDecision = false;
+        if (isTimeForSwap()) {
+            gamePhase = GamePhase.pendingSwap;
+        }else {
+            gamePhase = GamePhase.openingCases;
+        }
     }
 
     public List<Double> getFullOfferHistory() {
@@ -65,17 +87,9 @@ public class GameState {
         return history.subList(1, history.size());
     }
 
-    public int casesToOpenUntilBankerOffer() {
-        int casesOpened = caseCollection.getOpenedCases().size();
-        int nextOfferAt = Arrays.asList(GameRules.BANKER_OFFERS_AT).stream()
-                .filter(offer -> offer > casesOpened)
-                .min(Integer::compare).get();
-        return nextOfferAt - casesOpened;
-    }
-
     public Case getTheFinalCase() {
-        if (!isTimeForSwap()) {
-            throw new IllegalStateException("Cannot get final case because its not time for the swap");
+        if (gamePhase != GamePhase.finished ) {
+            throw new IllegalStateException("Cannot get final case");
         }
 
         List<Case> closedCases = caseCollection.getClosedCases();
@@ -90,47 +104,61 @@ public class GameState {
     }
 
     public List<Case> getMoneyTableState() {
-        return getCaseList().stream().sorted((case1, case2) -> Float.compare(case1.getValue(), case2.getValue())).collect(Collectors.toList());
+        return getCaseList().stream()
+                .sorted((case1, case2) -> Float.compare(case1.getValue(), case2.getValue()))
+                .collect(Collectors.toList());
     }
 
-    private boolean hasChosenOwnCase() {
-        return caseCollection.hasChosenOwnCase();
+    public Case getOwnCase() {
+        return caseCollection.getOwnedCase();
     }
 
     public void finalizeGame(EndingType endingType) {
-        if (endingState != null) {
-            throw new IllegalStateException("Cannot finalize the game after it has already been finalized");
-        }
         if (endingType == null) {
-            throw new IllegalArgumentException("Ending type cannot be null");
+            throw new IllegalArgumentException("EndingData type cannot be null");
+        }
+        if (endingData != null) {
+            throw new IllegalStateException("Cannot finalize the game after it has already been finalized");
         }
         int finalWinnings = -1;
         switch(endingType) {
             case Deal:
-                // TODO: ensure this is ok time to take deal.
+                if (gamePhase != GamePhase.pendingDeal) {
+                    throw new IllegalStateException("Cannot accept deal at this time");
+                }
                 finalWinnings = (int) Math.floor(banker.getOfferHistory().get(0));
                 break;
             case Swap:
-                // TODO: ensure this is ok time to swap. Closed cases = 1 or something
+                if (gamePhase != GamePhase.pendingSwap) {
+                    throw new IllegalStateException("Cannot swap at this time");
+                }
                 caseCollection.swapChosenCaseWithLastClosedCase();
                 finalWinnings = (int) Math.floor(caseCollection.getOwnedCase().getValue());
                 break;
             case NoSwap:
-                // TODO: ensure this is ok time to not swap. Closed cases = 1 or something
+                if (gamePhase != GamePhase.pendingSwap) {
+                    throw new IllegalStateException("Cannot decline swap at this time");
+                }
                 finalWinnings = (int) Math.floor(caseCollection.getOwnedCase().getValue());
                 break;
             default:
                 throw new IllegalArgumentException("Cannot finalize the game with this ending type");
         }
-
-        endingState = new EndingState(endingType, finalWinnings);
+        gamePhase = GamePhase.finished;
+        endingData = new EndingData(endingType, finalWinnings);
     }
 
     public int getFinalWinnings() {
-        if (endingState == null) {
+        if (endingData == null || gamePhase != GamePhase.finished) {
             throw new IllegalStateException("Cannot get winnings before finalizing the game");
         }
-        return endingState.getPrizeMoney();
+        return endingData.getPrizeMoney();
     }
 
+    public EndingType getEndingType() {
+        if (endingData == null || gamePhase != GamePhase.finished) {
+            throw new IllegalStateException("Cannot get ending type before finalizing the game");
+        }
+        return endingData.getEndingType();
+    }
 }

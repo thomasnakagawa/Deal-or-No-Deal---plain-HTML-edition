@@ -1,6 +1,6 @@
-package GameState;
+package GameState.Case;
 
-import Util.Formatter;
+import Rendering.Formatter;
 
 public class Case {
     private int number;
@@ -19,10 +19,6 @@ public class Case {
 
     public float getValue() {
         return value;
-    }
-
-    public String getValueFormatted() {
-        return Formatter.formatMoney(value);
     }
 
     public CaseState getCaseState() {

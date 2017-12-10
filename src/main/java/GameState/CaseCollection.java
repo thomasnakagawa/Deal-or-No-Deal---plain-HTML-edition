@@ -1,5 +1,8 @@
 package GameState;
 
+import GameState.Case.Case;
+import GameState.Case.CaseState;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +11,6 @@ import java.util.stream.Collectors;
 
 class CaseCollection {
     private List<Case> caseList;
-    private boolean chosenOwnCase = false;
     private boolean swappedCases = false;
 
     public CaseCollection(Float[] moneyAmounts) {
@@ -27,18 +29,11 @@ class CaseCollection {
     }
 
     public void ownCase(int caseNumber) {
-        if (hasChosenOwnCase()) {
-            throw new IllegalStateException("Cannot choose own case, it has already been chosen");
-        }
         Case chosenCase = getCaseByNumber(caseNumber);
         chosenCase.setCaseState(CaseState.Owned);
-        chosenOwnCase = true;
     }
 
     public void openCase(int caseNumber) {
-        if (hasChosenOwnCase() == false) {
-            throw new IllegalStateException("Cannot open case, haven't chosen own case yet");
-        }
         Case chosenCase = getCaseByNumber(caseNumber);
         chosenCase.setCaseState(CaseState.Opened);
     }
@@ -54,9 +49,6 @@ class CaseCollection {
     }
 
     public Case getOwnedCase() {
-        if (hasChosenOwnCase() == false) {
-            throw new IllegalStateException("Cannot get owned case before choosing the case");
-        }
         List<Case> ownedCases = getCasesOfState(CaseState.Owned);
         if (ownedCases.size() != 1) {
             throw new IllegalStateException("There is not exactly one owned case");
@@ -78,21 +70,18 @@ class CaseCollection {
                 .collect(Collectors.toList());
     }
 
-    public boolean hasChosenOwnCase() {
-        return chosenOwnCase;
-    }
-
     public void swapChosenCaseWithLastClosedCase() {
         if (hasSwappedCases()) {
             throw new IllegalStateException("Cannot swap cases, a swap has already occured");
         }
         List<Case> closedCases = getClosedCases();
         if (closedCases.size() != 1) {
-            throw new IllegalStateException("Cannot sawp cases, there is not exactly one closed case");
+            throw new IllegalStateException("Cannot swap cases, there is not exactly one closed case");
         }
         Case newChosenCase = closedCases.get(0);
+        Case oldChosenCase = getOwnedCase();
 
-        getOwnedCase().setCaseState(CaseState.Opened);
+        oldChosenCase.setCaseState(CaseState.Closed);
         newChosenCase.setCaseState(CaseState.Owned);
 
         swappedCases = true;

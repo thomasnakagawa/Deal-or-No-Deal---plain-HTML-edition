@@ -1,4 +1,4 @@
-package Util;
+package Rendering;
 
 import GameState.GameState;
 import org.apache.velocity.app.*;
@@ -11,32 +11,26 @@ import java.util.*;
 
 public class ViewRenderer {
 
-    public static String renderCaseView(String gameID, GameState gameState) {
+    public static String renderNextGameView(String gameID, GameState gameState) {
         Map<String, Object> model = new HashMap<>();
         model.put("gameID", gameID);
         model.put("gameState", gameState);
-        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/caseView.vm"));
-    }
+        model.put("Render", RenderingConstants.class);
+        model.put("Formatter", Formatter.class);
 
-    public static String renderBankerView(String gameID, GameState gameState) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("gameID", gameID);
-        model.put("gameState", gameState);
-        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/bankerView.vm"));
-    }
-
-    public static String renderSwapView(String gameID, GameState gameState) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("gameID", gameID);
-        model.put("gameState", gameState);
-        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/swapView.vm"));
-    }
-
-    public static String renderEnding(String gameID, GameState gameState) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("gameID", gameID);
-        model.put("gameState", gameState);
-        return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/ending.vm"));
+        switch (gameState.getGamePhase()) {
+            case choosingInitialCase:
+            case openingCases:
+                return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/caseView.vm"));
+            case pendingDeal:
+                return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/bankerView.vm"));
+            case pendingSwap:
+                return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/swapView.vm"));
+            case finished:
+                return strictVelocityEngine().render(new ModelAndView(model, "/Velocity/ending.vm"));
+            default:
+                throw new IllegalArgumentException("Cannot render game for this game phase");
+        }
     }
 
     public static String renderLeaderboard(List<String> scores) {

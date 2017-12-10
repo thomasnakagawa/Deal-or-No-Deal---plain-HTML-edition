@@ -5,12 +5,12 @@
 #renderCaseTable($gameState.getCaseList(), true)
 
 <center>
-#if($gameState.getChosenCase())
-    #renderIndividualCase($gameState.getChosenCase())
+#if($gameState.getGamePhase() == "choosingInitialCase")
+    <h2>Choose your case</h2>
+#else
+    #renderIndividualCase($gameState.getOwnCase())
     #set($caseNoun = "#if($gameState.casesToOpenUntilBankerOffer() != 1)cases#{else}case#end")
     <h2>Open $gameState.casesToOpenUntilBankerOffer() more $caseNoun</h2>
-#else
-    <h2>Choose your case</h2>
 #end
 </center>
 

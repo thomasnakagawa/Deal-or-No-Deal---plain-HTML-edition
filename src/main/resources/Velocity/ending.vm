@@ -5,29 +5,29 @@
 #renderCaseTable($gameState.getCaseList(), false)
 
 <center>
-    #renderIndividualCase($gameState.getChosenCase())
+    #renderIndividualCase($gameState.getOwnCase())
     <h3>
-        #if($deal == true)
-            #set($offers = $gameState.getOfferHistory())
+        #if($gameState.getEndingType() == "Deal")
+            #set($offers = $gameState.getOfferHistoryMinusMostRecent())
             <br/>
-            You sold your case to the banker for $gameState.getLatestOffer(), it contained $gameState.getChosenCase().getValueFormatted().
-            <br/>
-            <br/>
-            You won $gameState.getLatestOffer(), congratulations!
-        #elseif($swapped == true)
-            #set($offers = $gameState.getCompleteOfferHistory())
-            <br/>
-            You swapped with case $gameState.getChosenCase().getNumber(). Your new case contains $gameState.getChosenCase().getValueFormatted(). You original case contained $gameState.getTheFinalCase().getValueFormatted().
+            You sold your case to the banker for $Formatter.formatMoney($gameState.getLatestOffer()), it contained $Formatter.formatMoney($gameState.getOwnCase().getValue()).
             <br/>
             <br/>
-            You won $gameState.getChosenCase().getValueFormatted(), congratulations!
+            You won $Formatter.formatMoney($gameState.getLatestOffer()), congratulations!
+        #elseif($gameState.getEndingType() == "Swap")
+            #set($offers = $gameState.getFullOfferHistory())
+            <br/>
+            You swapped with case $gameState.getOwnCase().getNumber(). Your new case contains $Formatter.formatMoney($gameState.getOwnCase().getValue()). Your original case contained $Formatter.formatMoney($gameState.getTheFinalCase().getValue()).
+            <br/>
+            <br/>
+            You won $Formatter.formatMoney($gameState.getOwnCase().getValue()), congratulations!
         #else
-            #set($offers = $gameState.getCompleteOfferHistory())
+            #set($offers = $gameState.getFullOfferHistory())
             <br/>
-            You kept your case and it contained $gameState.getChosenCase().getValueFormatted(). The other case contained $gameState.getTheFinalCase().getValueFormatted().
+            You kept your case and it contained $Formatter.formatMoney($gameState.getOwnCase().getValue()). The other case contained $Formatter.formatMoney($gameState.getTheFinalCase().getValue()).
             <br/>
             <br/>
-            You won $gameState.getChosenCase().getValueFormatted(), congratulations!
+            You won $Formatter.formatMoney($gameState.getOwnCase().getValue()), congratulations!
         #end
     </h3>
 
@@ -35,7 +35,7 @@
         <br/>
         <p>You turned down offers for</p>
         #foreach( $offer in $offers )
-            $offer
+            $Formatter.formatMoney($offer)
             <br/>
         #end
     #end

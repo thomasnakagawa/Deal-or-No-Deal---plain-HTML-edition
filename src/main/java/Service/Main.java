@@ -1,9 +1,8 @@
+package Service;
+
 import GameState.GameState;
-import GameState.GameStateCache;
-import GameState.EndingType;
-import Util.Formatter;
-import Util.LeaderboardAccessor;
-import Util.ViewRenderer;
+import GameState.Ending.EndingType;
+import Rendering.ViewRenderer;
 
 import java.io.IOException;
 
@@ -23,7 +22,7 @@ public class Main {
         get("/start", (req, res) -> {
             String id = gameStateCache.createNewGame();
             GameState gameState = gameStateCache.getGameState(id);
-            return ViewRenderer.renderCaseView(id, gameState);
+            return ViewRenderer.renderNextGameView(id, gameState);
         });
 
         get("/game/*/case/*", (req, res) -> {
@@ -31,18 +30,14 @@ public class Main {
             String gameID = req.splat()[0];
             int caseNumber = Integer.parseInt(req.splat()[1]);
 
-            // get associated GameState.GameState
+            // get associated GameState
             GameState gameState = gameStateCache.getGameState(gameID);
 
             // open the case
             gameState.chooseCase(caseNumber);
 
             // render the next view
-            if (gameState.needDecisionOnOffer()) {
-                return ViewRenderer.renderBankerView(gameID, gameState);
-            } else {
-                return ViewRenderer.renderCaseView(gameID, gameState);
-            }
+            return ViewRenderer.renderNextGameView(gameID, gameState);
         });
 
         get("/game/*/deal/*", (req, res) -> {
@@ -50,24 +45,18 @@ public class Main {
             String gameID = req.splat()[0];
             boolean deal = req.splat()[1].equals("yes");
 
-            // get associate GameState.GameState
+            // get associated GameState
             GameState gameState = gameStateCache.getGameState(gameID);
 
-            // process the deal and render the next view
+            // process the deal
             if (deal) {
                 gameState.finalizeGame(EndingType.Deal);
-                return ViewRenderer.renderEnding(gameID, gameState);
             } else {
-                // serve the next case view
-                // if time for swap view, show that
                 gameState.declineOffer();
-                if (gameState.isTimeForSwap()) {
-                    // TODO: this only works because the swap option always happens after a deal decision. If the rules change and that isnt the case, this check will have to happen somewhere else
-                    return ViewRenderer.renderSwapView(gameID, gameState);
-                } else {
-                    return ViewRenderer.renderCaseView(gameID, gameState);
-                }
             }
+
+            // render the next view
+            return ViewRenderer.renderNextGameView(gameID, gameState);
         });
 
         get("/game/*/swap/*", (req, res) -> {
@@ -75,7 +64,7 @@ public class Main {
             String gameID = req.splat()[0];
             boolean swap = req.splat()[1].equals("yes");
 
-            // get associate GameState.GameState
+            // get associated GameState
             GameState gameState = gameStateCache.getGameState(gameID);
 
             // apply swap if chose to
@@ -86,7 +75,7 @@ public class Main {
             }
 
             // render next view
-            return ViewRenderer.renderEnding(gameID, gameState);
+            return ViewRenderer.renderNextGameView(gameID, gameState);
         });
 
         post("/game/*/leaderboard", (req, res) -> {
@@ -94,7 +83,7 @@ public class Main {
             String gameID = req.splat()[0];
             String name = req.queryParams("name");
 
-            // get associate GameState
+            // get associated GameState
             GameState gameState = gameStateCache.getGameState(gameID);
             int score = gameState.getFinalWinnings();
             gameStateCache.removeGameState(gameID);

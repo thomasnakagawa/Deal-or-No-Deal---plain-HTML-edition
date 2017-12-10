@@ -21,8 +21,7 @@ class Banker {
         double expectedValue = 0f;
         float maxValueRemaining = -1f;
         float minValueRemaining = 9999999999f;
-        for (float moneyAmount : concealedMoneyAmounts) {
-            numberUnopened += 1;
+        for (Float moneyAmount : concealedMoneyAmounts) {
             expectedValue += moneyAmount;
             maxValueRemaining = Math.max(moneyAmount, maxValueRemaining);
             minValueRemaining = Math.min(moneyAmount, minValueRemaining);

@@ -1,4 +1,4 @@
-package GameState;
+package GameState.Case;
 
 public enum CaseState {
     Closed,
